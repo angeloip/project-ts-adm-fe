@@ -2,15 +2,16 @@ import { MdDelete } from 'react-icons/md'
 import { AiFillFileImage } from 'react-icons/ai'
 import { FaCloudUploadAlt } from 'react-icons/fa'
 import { IconButton } from './IconButton'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Toast } from '../helpers/toast'
 
 interface Props {
   isLoading?: boolean
   onChange?: (file: File | string) => void
+  value?: string | File
 }
 
-export const UploadFile: React.FC<Props> = ({ isLoading, onChange }) => {
+export const UploadFile: React.FC<Props> = ({ isLoading, onChange, value }) => {
   const ref = useRef<null | HTMLDivElement>(null)
   const [image, setImage] = useState<string | null>(null)
   const [fileName, setFileName] = useState('Ningún archivo seleccionado')
@@ -59,6 +60,13 @@ export const UploadFile: React.FC<Props> = ({ isLoading, onChange }) => {
       handleImage(e.dataTransfer.files)
     }
   }
+
+  useEffect(() => {
+    if (value) {
+      setImage(value as string)
+      setFileName(value as string)
+    }
+  }, [])
 
   return (
     <div className="max-w-[500px]">

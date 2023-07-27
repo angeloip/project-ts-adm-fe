@@ -47,7 +47,6 @@ export const CreateProduct = () => {
           value={form.category}
           onChange={handleChange}
         />
-        <input type="file" name="thumbnail" onChange={handleChange} />
         <UploadFile
           isLoading={isLoading}
           onChange={(file) => {
