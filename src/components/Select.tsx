@@ -1,10 +1,10 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { IoIosArrowDown } from 'react-icons/io'
 
 interface Props {
   options?: string[]
   value?: string
-  onChange?: (...args: any[]) => void
+  onChange?: (option: string) => void
 }
 
 export const Select: React.FC<Props> = ({
@@ -13,17 +13,36 @@ export const Select: React.FC<Props> = ({
   onChange
 }) => {
   const [isOpen, setIsOpen] = useState(false)
+  const selectRef = useRef<HTMLDivElement>(null)
 
   const handleChange = (option: string) => {
     onChange?.(option)
   }
 
+  const handleClickOutside = (event: MouseEvent): void => {
+    if (
+      selectRef.current != null &&
+      !selectRef.current.contains(event.target as Node)
+    ) {
+      setIsOpen(false)
+    }
+  }
+
+  useEffect(() => {
+    document.addEventListener('click', handleClickOutside)
+    return () => {
+      document.removeEventListener('click', handleClickOutside)
+    }
+  }, [])
+
   return (
-    <section
+    <div
       onClick={() => {
         setIsOpen((prev) => !prev)
       }}
-      className="relative cursor-pointer px-3 py-2.5 w-full bg-transparent rounded-lg border-2 border-gray-400 outline-none focus:border-indigo-500 flex items-center gap-2"
+      ref={selectRef}
+      tabIndex={0}
+      className="group relative px-3 py-2.5 flex items-center gap-2 cursor-pointer w-full bg-transparent rounded-lg border-2 border-gray-400 outline-none focus:border-indigo-500 duration-200"
     >
       <span className="grow select-none">
         {value == null || value === '' ? 'Elegir opción' : value}
@@ -34,7 +53,7 @@ export const Select: React.FC<Props> = ({
       <div
         className={`${
           isOpen ? 'block' : 'hidden'
-        } absolute overflow-hidden z-10 w-full bg-white rounded-lg border-2 border-gray-400 outline-none focus:border-indigo-500 left-0 top-[calc(100%_+_0.25em)]`}
+        } absolute overflow-hidden z-10 w-full bg-white rounded-lg border-2 border-gray-400 outline-none left-0 top-[calc(100%_+_0.25em)]`}
       >
         {options?.map((option, index) => {
           return (
@@ -53,6 +72,10 @@ export const Select: React.FC<Props> = ({
           )
         })}
       </div>
-    </section>
+
+      <span className="absolute top-0 left-[7px] text-[13px] bg-white -translate-y-1/2 select-none px-1 pointer-events-none text-gray-500 group-focus:text-indigo-500 duration-200">
+        Categoría
+      </span>
+    </div>
   )
 }

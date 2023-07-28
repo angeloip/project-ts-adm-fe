@@ -1,29 +1,29 @@
-export interface Product {
-  _id?: string
+interface Default {
   name: string
   description: string
   price: number
-  discountPercentage?: number
-  rating?: number
   stock: number
-  category: string
-  thumbnail: File | string
-  createdAt?: Date
-  updatedAt?: Date
 }
 
-export interface ProductResponse {
+export interface Product extends Default {
+  discountPercentage?: number
+  category: string
+  thumbnail: File | string
+}
+
+export interface ProductResponse extends Default {
   thumbnail: Thumbnail
   _id: string
-  name: string
-  description: string
-  price: number
   discountPercentage: number
   rating: number
-  stock: number
-  category: string
+  category: Category
   createdAt: Date
   updatedAt: Date
+}
+
+export interface Category {
+  _id: string
+  name: string
 }
 
 export interface Thumbnail {

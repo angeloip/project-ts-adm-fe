@@ -17,6 +17,7 @@ module.exports = {
     "react/react-in-jsx-scope": "off",
     "@typescript-eslint/strict-boolean-expressions": "off",
     "multiline-ternary": "off",
-    "@typescript-eslint/space-before-function-paren": "off"
+    "@typescript-eslint/space-before-function-paren": "off",
+    "@typescript-eslint/no-misused-promises": "off"
   },
 };

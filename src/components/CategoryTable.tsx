@@ -3,10 +3,12 @@ import { type CategoryResponse } from '../interfaces/category'
 import { useState, useEffect } from 'react'
 import { useApi } from '../api/useApi'
 import { Toast } from '../helpers/toast'
+import { useVariable } from '../context/VariableContext'
 
 export const CategoryTable = () => {
   const [categories, setCategories] = useState<CategoryResponse[]>([])
-  const { getCategoriesRequest } = useApi()
+  const { getCategoriesRequest, deleteCategoryRequest } = useApi()
+  const { setIsLoadingBox } = useVariable()
 
   const getCategories = async () => {
     await getCategoriesRequest()
@@ -16,6 +18,23 @@ export const CategoryTable = () => {
       .catch((err) => {
         Toast('error', err.response.data.msg)
       })
+  }
+
+  const deleteCategory = async (id: string) => {
+    if (confirm('¿Estás seguro de eliminar esta categoría?')) {
+      setIsLoadingBox(true)
+      await deleteCategoryRequest(id)
+        .then((res) => {
+          Toast('success', res.data.msg)
+        })
+        .catch((err) => {
+          Toast('error', err.response.data.msg)
+        })
+        .finally(async () => {
+          await getCategories()
+          setIsLoadingBox(false)
+        })
+    }
   }
 
   useEffect(() => {
@@ -40,7 +59,7 @@ export const CategoryTable = () => {
                 className={`${
                   index === categories.length - 1
                     ? ''
-                    : ' border-b  border-slate-200'
+                    : 'border-b  border-slate-200'
                 }`}
               >
                 <td className="p-4">{element._id}</td>
@@ -48,9 +67,9 @@ export const CategoryTable = () => {
                 <td className="p-4">
                   <div className="flex items-center gap-2 text-xl">
                     <button
-                    /* onClick={() => {
-                      void deleteProduct(element._id)
-                    }} */
+                      onClick={() => {
+                        void deleteCategory(element._id)
+                      }}
                     >
                       <FaTrash className="text-red-600" />
                     </button>

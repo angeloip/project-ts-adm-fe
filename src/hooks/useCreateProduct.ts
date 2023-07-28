@@ -1,7 +1,8 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { type Product } from '../interfaces/product'
 import { useApi } from '../api/useApi'
 import { Toast } from '../helpers/toast'
+import { type CategoryResponse } from '../interfaces/category'
 
 const initialState: Product = {
   name: '',
@@ -14,8 +15,12 @@ const initialState: Product = {
 
 export const useCreateProduct = () => {
   const [form, setForm] = useState<Product>(initialState)
-  const [isLoading, setIsLoading] = useState(false)
-  const { createProductRequest } = useApi()
+  const [categories, setCategories] = useState<CategoryResponse[]>([])
+  const [isLoading, setIsLoading] = useState({
+    createProduct: false,
+    getCategories: true
+  })
+  const { createProductRequest, getCategoriesRequest } = useApi()
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, files } = e.target
@@ -44,7 +49,6 @@ export const useCreateProduct = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    setIsLoading(true)
 
     const isAnyFieldEmpty = Object.keys(form).some((key) => {
       const fieldValue = form[key as keyof Product]
@@ -56,8 +60,9 @@ export const useCreateProduct = () => {
     })
     console.log(form)
     if (isAnyFieldEmpty) {
-      Toast('info', 'Todos los campos son requeridos')
+      return Toast('info', 'Todos los campos son requeridos')
     } else {
+      setIsLoading({ ...isLoading, createProduct: true })
       await createProductRequest(form)
         .then((res) => {
           Toast('success', res.data.msg)
@@ -66,12 +71,32 @@ export const useCreateProduct = () => {
         .catch((err) => {
           Toast('error', err.response.data.msg)
         })
+        .finally(() => {
+          setIsLoading({ ...isLoading, createProduct: false })
+        })
     }
-    setIsLoading(false)
   }
+
+  const getCategories = async () => {
+    await getCategoriesRequest()
+      .then((res) => {
+        setCategories(res.data)
+      })
+      .catch((err) => {
+        Toast('error', err.response.data.msg)
+      })
+      .finally(() => {
+        setIsLoading({ ...isLoading, getCategories: false })
+      })
+  }
+
+  useEffect(() => {
+    void getCategories()
+  }, [])
 
   return {
     form,
+    categories,
     isLoading,
     handleChange,
     handleSubmit,

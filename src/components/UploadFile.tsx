@@ -62,11 +62,16 @@ export const UploadFile: React.FC<Props> = ({ isLoading, onChange, value }) => {
   }
 
   useEffect(() => {
-    if (value) {
-      setImage(value as string)
-      setFileName(value as string)
+    if (typeof value === 'string' && value !== '') {
+      setImage(value)
+      setFileName(value)
     }
-  }, [])
+    if (value === '') {
+      setImage(null)
+      setFileName('Ningún archivo seleccionado')
+      setFileSize(null)
+    }
+  }, [value])
 
   return (
     <div className="max-w-[500px]">

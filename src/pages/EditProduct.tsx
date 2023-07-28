@@ -5,6 +5,8 @@ import { useParams } from 'react-router-dom'
 import { useApi } from '../api/useApi'
 import { Toast } from '../helpers/toast'
 import { type Product } from '../interfaces/product'
+import { type CategoryResponse } from '../interfaces/category'
+import { Select } from '../components/Select'
 
 const initialState: Product = {
   name: '',
@@ -18,6 +20,7 @@ const initialState: Product = {
 
 export const EditProduct = () => {
   const [product, setProduct] = useState<Product>(initialState)
+  const [categories, setCategories] = useState<CategoryResponse[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [isLoadingData, setIsLoadingData] = useState(false)
   const [isLoadingImage, setIsLoadingImage] = useState(false)
@@ -25,7 +28,8 @@ export const EditProduct = () => {
   const {
     getProductRequest,
     updateProductRequest,
-    updateProductPictureRequest
+    updateProductPictureRequest,
+    getCategoriesRequest
   } = useApi()
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -65,10 +69,25 @@ export const EditProduct = () => {
     }
   }
 
+  const getCategories = async () => {
+    await getCategoriesRequest()
+      .then((res) => {
+        setCategories(res.data)
+      })
+      .catch((err) => {
+        Toast('error', err.response.data.msg)
+      })
+  }
+
   const getProduct = async () => {
     await getProductRequest(id as string)
-      .then((res) => {
-        setProduct({ ...res.data, thumbnail: res.data.thumbnail.url })
+      .then(async (res) => {
+        setProduct({
+          ...res.data,
+          category: res.data.category.name,
+          thumbnail: res.data.thumbnail.url
+        })
+        await getCategories()
       })
       .catch((err) => Toast('error', err.response.data.msg))
       .finally(() => {
@@ -87,12 +106,7 @@ export const EditProduct = () => {
         <h1 className="text-3xl font-bold text-center mb-4">Cargando...</h1>
       ) : (
         <section className="flex flex-col gap-3">
-          <form
-            className="flex flex-col gap-3"
-            onSubmit={(e) => {
-              void handleSubmitData(e)
-            }}
-          >
+          <form className="flex flex-col gap-3" onSubmit={handleSubmitData}>
             <Input
               text="Nombre"
               name="name"
@@ -119,13 +133,13 @@ export const EditProduct = () => {
               value={product.stock}
               onChange={handleChange}
             />
-            <Input
-              text="Categoría"
-              name="category"
+            <Select
+              options={categories.map((category) => category.name)}
               value={product.category}
-              onChange={handleChange}
+              onChange={(option) => {
+                setProduct({ ...product, category: option })
+              }}
             />
-
             <button
               className="button-primary"
               disabled={isLoadingData || isLoadingImage}
@@ -134,12 +148,7 @@ export const EditProduct = () => {
             </button>
           </form>
 
-          <form
-            className="flex flex-col gap-3"
-            onSubmit={(e) => {
-              void handleSubmitImage(e)
-            }}
-          >
+          <form className="flex flex-col gap-3" onSubmit={handleSubmitImage}>
             <UploadFile
               isLoading={isLoading}
               value={product.thumbnail}

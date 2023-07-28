@@ -4,20 +4,25 @@ import { Toast } from '../helpers/toast'
 import { type ProductResponse } from '../interfaces/product'
 import { FaEdit, FaTrash } from 'react-icons/fa'
 import { Link } from 'react-router-dom'
+import { useVariable } from '../context/VariableContext'
 
 export const ProductTable = () => {
   const [products, setProducts] = useState<ProductResponse[]>([])
   const { getProductsRequest, deleteProductRequest } = useApi()
+  const { setIsLoadingBox } = useVariable()
 
   const deleteProduct = async (id: string) => {
     if (confirm('¿Estás seguro de eliminar este producto?')) {
+      setIsLoadingBox(true)
       await deleteProductRequest(id)
         .then((res) => {
           Toast('success', res.data.msg)
         })
         .catch((err) => Toast('error', err.response.data.msg))
-    } else {
-      Toast('error', 'Producto no eliminado')
+        .finally(async () => {
+          await getProducts()
+          setIsLoadingBox(false)
+        })
     }
   }
 
@@ -40,6 +45,7 @@ export const ProductTable = () => {
           <tr>
             <th className="p-4 text-left">Id</th>
             <th className="p-4 text-left">Nombre</th>
+            <th className="p-4 text-left">Categoría</th>
             <th className="p-4 text-left">Precio</th>
             <th className="p-4 text-left">Stock</th>
             <th className="p-4 text-left">Imagen</th>
@@ -54,11 +60,12 @@ export const ProductTable = () => {
                 className={`${
                   index === products.length - 1
                     ? ''
-                    : ' border-b  border-slate-200'
+                    : 'border-b  border-slate-200'
                 }`}
               >
                 <td className="p-4">{element._id}</td>
                 <td className="p-4">{element.name}</td>
+                <td className="p-4">{element.category.name}</td>
                 <td className="p-4">{element.price}</td>
                 <td className="p-4">{element.stock}</td>
                 <td className="p-4">

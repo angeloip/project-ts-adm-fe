@@ -6,10 +6,14 @@ import { Navbar } from './components/Navbar'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import { Categories } from './pages/Categories'
+import { useVariable } from './context/VariableContext'
+import { BoxLoad } from './components/BoxLoad'
 
 function App() {
+  const { isLoadingBox } = useVariable()
   return (
     <>
+      {isLoadingBox && <BoxLoad />}
       <ToastContainer pauseOnFocusLoss={false} theme="colored" />
       <Navbar />
       <Routes>

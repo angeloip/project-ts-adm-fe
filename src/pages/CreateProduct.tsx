@@ -6,6 +6,7 @@ import { useCreateProduct } from '../hooks/useCreateProduct'
 export const CreateProduct = () => {
   const {
     form,
+    categories,
     isLoading,
     handleChange,
     handleSubmit,
@@ -13,58 +14,58 @@ export const CreateProduct = () => {
     handleThumbnail
   } = useCreateProduct()
 
-  console.log(form)
   return (
     <div className="component-box">
       <h1 className="text-3xl font-bold text-center mb-4">Create Product</h1>
-      <form
-        className="flex flex-col gap-3"
-        onSubmit={(e) => {
-          void handleSubmit(e)
-        }}
-      >
-        <Input
-          text="Nombre"
-          name="name"
-          value={form.name}
-          onChange={handleChange}
-        />
-        <Input
-          text="Descripción"
-          name="description"
-          value={form.description}
-          onChange={handleChange}
-        />
-        <Input
-          type="number"
-          text="Precio"
-          name="price"
-          value={form.price}
-          onChange={handleChange}
-        />
-        <Input
-          type="number"
-          text="Stock"
-          name="stock"
-          value={form.stock}
-          onChange={handleChange}
-        />
-        <Select
-          value={form.category}
-          onChange={(option) => {
-            handleCategory(option)
-          }}
-        />
-        <UploadFile
-          isLoading={isLoading}
-          onChange={(file) => {
-            handleThumbnail(file)
-          }}
-        />
-        <button className="button-primary" disabled={isLoading}>
-          {isLoading ? 'Creando...' : 'Crear'}
-        </button>
-      </form>
+      {isLoading.getCategories ? (
+        <h1 className="text-3xl font-bold text-center mb-4">Cargando...</h1>
+      ) : (
+        <form className="flex flex-col gap-3" onSubmit={handleSubmit}>
+          <Input
+            text="Nombre"
+            name="name"
+            value={form.name}
+            onChange={handleChange}
+          />
+          <Input
+            text="Descripción"
+            name="description"
+            value={form.description}
+            onChange={handleChange}
+          />
+          <Input
+            type="number"
+            text="Precio"
+            name="price"
+            value={form.price}
+            onChange={handleChange}
+          />
+          <Input
+            type="number"
+            text="Stock"
+            name="stock"
+            value={form.stock}
+            onChange={handleChange}
+          />
+          <Select
+            options={categories.map((category) => category.name)}
+            value={form.category}
+            onChange={(option) => {
+              handleCategory(option)
+            }}
+          />
+          <UploadFile
+            isLoading={isLoading.createProduct}
+            value={form.thumbnail}
+            onChange={(file) => {
+              handleThumbnail(file)
+            }}
+          />
+          <button className="button-primary" disabled={isLoading.createProduct}>
+            {isLoading.createProduct ? 'Creando...' : 'Crear'}
+          </button>
+        </form>
+      )}
     </div>
   )
 }
