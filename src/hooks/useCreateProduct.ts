@@ -38,6 +38,10 @@ export const useCreateProduct = () => {
     setForm({ ...form, thumbnail: file })
   }
 
+  const handleCategory = (category: string) => {
+    setForm({ ...form, category })
+  }
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setIsLoading(true)
@@ -66,5 +70,12 @@ export const useCreateProduct = () => {
     setIsLoading(false)
   }
 
-  return { form, isLoading, handleChange, handleSubmit, handleThumbnail }
+  return {
+    form,
+    isLoading,
+    handleChange,
+    handleSubmit,
+    handleCategory,
+    handleThumbnail
+  }
 }

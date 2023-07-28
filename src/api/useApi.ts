@@ -1,4 +1,5 @@
 import axios from '../config/axios'
+import { type CategoryResponse } from '../interfaces/category'
 import { type ProductResponse, type Product } from '../interfaces/product'
 
 export const useApi = () => {
@@ -43,12 +44,20 @@ export const useApi = () => {
   const deleteProductRequest = async (id: string) =>
     await axios.delete(`/product/${id}`)
 
+  const createCategoryRequest = async (name: string) =>
+    await axios.post('/category', { name })
+
+  const getCategoriesRequest = async () =>
+    await axios.get<CategoryResponse[]>('/category')
+
   return {
     createProductRequest,
     getProductsRequest,
     getProductRequest,
     updateProductRequest,
     updateProductPictureRequest,
-    deleteProductRequest
+    deleteProductRequest,
+    createCategoryRequest,
+    getCategoriesRequest
   }
 }

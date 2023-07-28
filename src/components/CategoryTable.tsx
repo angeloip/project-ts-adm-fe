@@ -1,9 +1,27 @@
 import { FaEdit, FaTrash } from 'react-icons/fa'
 import { type CategoryResponse } from '../interfaces/category'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useApi } from '../api/useApi'
+import { Toast } from '../helpers/toast'
 
 export const CategoryTable = () => {
   const [categories, setCategories] = useState<CategoryResponse[]>([])
+  const { getCategoriesRequest } = useApi()
+
+  const getCategories = async () => {
+    await getCategoriesRequest()
+      .then((res) => {
+        setCategories(res.data)
+      })
+      .catch((err) => {
+        Toast('error', err.response.data.msg)
+      })
+  }
+
+  useEffect(() => {
+    void getCategories()
+  }, [])
+
   return (
     <section className="p-4 border border-slate-200 rounded-xl shadow-md">
       <table className="w-full text-gray-500">

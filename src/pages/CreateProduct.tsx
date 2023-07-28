@@ -1,11 +1,19 @@
 import { Input } from '../components/Input'
+import { Select } from '../components/Select'
 import { UploadFile } from '../components/UploadFile'
 import { useCreateProduct } from '../hooks/useCreateProduct'
 
 export const CreateProduct = () => {
-  const { form, isLoading, handleChange, handleSubmit, handleThumbnail } =
-    useCreateProduct()
+  const {
+    form,
+    isLoading,
+    handleChange,
+    handleSubmit,
+    handleCategory,
+    handleThumbnail
+  } = useCreateProduct()
 
+  console.log(form)
   return (
     <div className="component-box">
       <h1 className="text-3xl font-bold text-center mb-4">Create Product</h1>
@@ -41,11 +49,11 @@ export const CreateProduct = () => {
           value={form.stock}
           onChange={handleChange}
         />
-        <Input
-          text="Categoría"
-          name="category"
+        <Select
           value={form.category}
-          onChange={handleChange}
+          onChange={(option) => {
+            handleCategory(option)
+          }}
         />
         <UploadFile
           isLoading={isLoading}
