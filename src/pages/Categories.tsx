@@ -1,6 +1,6 @@
 import { CategoryTable } from '../components/CategoryTable'
 import { useState } from 'react'
-import { CreateCategory } from '../components/CreateCategory'
+import { CategoryModal } from '../components/CategoryModal'
 
 export const Categories = () => {
   const [show, setShow] = useState(false)
@@ -17,7 +17,7 @@ export const Categories = () => {
         Crear Categoría
       </button>
       <CategoryTable />
-      <CreateCategory show={show} setShow={setShow} />
+      <CategoryModal show={show} setShow={setShow} />
     </div>
   )
 }

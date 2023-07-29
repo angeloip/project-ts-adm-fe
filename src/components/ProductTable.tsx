@@ -41,6 +41,7 @@ export const ProductTable = () => {
   return (
     <section className="p-4 border border-slate-200 rounded-xl shadow-md">
       <table className="w-full text-gray-500">
+        <caption>Cantidad: {products.length}</caption>
         <thead className="border-b border-slate-200">
           <tr>
             <th className="p-4 text-left">Id</th>

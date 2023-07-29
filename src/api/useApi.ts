@@ -50,6 +50,9 @@ export const useApi = () => {
   const getCategoriesRequest = async () =>
     await axios.get<CategoryResponse[]>('/category')
 
+  const updateCategoryRequest = async (id: string, name: string) =>
+    await axios.patch(`/category/${id}`, { name })
+
   const deleteCategoryRequest = async (id: string) =>
     await axios.delete(`/category/${id}`)
 
@@ -62,6 +65,7 @@ export const useApi = () => {
     deleteProductRequest,
     createCategoryRequest,
     getCategoriesRequest,
+    updateCategoryRequest,
     deleteCategoryRequest
   }
 }

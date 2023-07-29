@@ -4,11 +4,14 @@ import { useState, useEffect } from 'react'
 import { useApi } from '../api/useApi'
 import { Toast } from '../helpers/toast'
 import { useVariable } from '../context/VariableContext'
+import { CategoryModal } from './CategoryModal'
 
 export const CategoryTable = () => {
   const [categories, setCategories] = useState<CategoryResponse[]>([])
   const { getCategoriesRequest, deleteCategoryRequest } = useApi()
   const { setIsLoadingBox } = useVariable()
+  const [show, setShow] = useState(false)
+  const [category, setCategory] = useState({ id: '', name: '' })
 
   const getCategories = async () => {
     await getCategoriesRequest()
@@ -56,11 +59,10 @@ export const CategoryTable = () => {
             return (
               <tr
                 key={element._id}
-                className={`${
-                  index === categories.length - 1
-                    ? ''
-                    : 'border-b  border-slate-200'
-                }`}
+                className={`${index === categories.length - 1
+                  ? ''
+                  : 'border-b  border-slate-200'
+                  }`}
               >
                 <td className="p-4">{element._id}</td>
                 <td className="p-4">{element.name}</td>
@@ -73,7 +75,7 @@ export const CategoryTable = () => {
                     >
                       <FaTrash className="text-red-600" />
                     </button>
-                    <button>
+                    <button onClick={() => { setCategory({ ...category, id: element._id, name: element.name }); setShow(true) }}>
                       <FaEdit className="text-yellow-500" />
                     </button>
                   </div>
@@ -83,6 +85,7 @@ export const CategoryTable = () => {
           })}
         </tbody>
       </table>
+      <CategoryModal show={show} setShow={setShow} value={category.name} id={category.id} isEdit />
     </section>
   )
 }

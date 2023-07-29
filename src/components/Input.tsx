@@ -4,6 +4,7 @@ interface Props {
   name?: string
   onChange?: (...args: any[]) => void
   value?: any
+  defaultValue?: any
   readOnly?: boolean
 }
 
@@ -13,6 +14,7 @@ export const Input: React.FC<Props> = ({
   name,
   onChange,
   value,
+  defaultValue,
   readOnly
 }) => {
   return (
@@ -25,6 +27,7 @@ export const Input: React.FC<Props> = ({
         name={name}
         onChange={onChange}
         value={value}
+        defaultValue={defaultValue}
         readOnly={readOnly}
         autoComplete="off"
       />
