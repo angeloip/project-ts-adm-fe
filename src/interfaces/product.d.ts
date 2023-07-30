@@ -18,7 +18,6 @@ export interface ProductResponse extends Default {
   rating: number
   category: Category
   createdAt: Date
-  updatedAt: Date
 }
 
 export interface Category {
