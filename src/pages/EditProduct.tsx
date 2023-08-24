@@ -45,7 +45,13 @@ export const EditProduct = () => {
       .then((res) => {
         Toast('success', res.data.msg)
       })
-      .catch((err) => Toast('error', err.response.data.msg))
+      .catch((err) => {
+        if (err.response.data.type === 'zod') {
+          err.response.data.msg.map((msg: string) => Toast('error', msg))
+        } else {
+          Toast('error', err.response.data.msg)
+        }
+      })
       .finally(() => {
         setIsLoadingData(false)
       })

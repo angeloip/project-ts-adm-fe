@@ -50,31 +50,22 @@ export const useCreateProduct = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
-    const isAnyFieldEmpty = Object.keys(form).some((key) => {
-      const fieldValue = form[key as keyof Product]
-
-      if (typeof fieldValue === 'string' || typeof fieldValue === 'number') {
-        return fieldValue === '' || fieldValue.toString() === '0'
-      }
-      return false
-    })
-    console.log(form)
-    if (isAnyFieldEmpty) {
-      return Toast('info', 'Todos los campos son requeridos')
-    } else {
-      setIsLoading({ ...isLoading, createProduct: true })
-      await createProductRequest(form)
-        .then((res) => {
-          Toast('success', res.data.msg)
-          setForm(initialState)
-        })
-        .catch((err) => {
+    setIsLoading({ ...isLoading, createProduct: true })
+    await createProductRequest(form)
+      .then((res) => {
+        Toast('success', res.data.msg)
+        setForm(initialState)
+      })
+      .catch((err) => {
+        if (err.response.data.type === 'zod') {
+          err.response.data.msg.map((msg: string) => Toast('error', msg))
+        } else {
           Toast('error', err.response.data.msg)
-        })
-        .finally(() => {
-          setIsLoading({ ...isLoading, createProduct: false })
-        })
-    }
+        }
+      })
+      .finally(() => {
+        setIsLoading({ ...isLoading, createProduct: false })
+      })
   }
 
   const getCategories = async () => {

@@ -13,6 +13,9 @@ export const useApi = () => {
         form.append(key, (value as string).toString())
       }
     }
+    if (product.thumbnail === '') {
+      form.delete('thumbnail')
+    }
     return await axios.post('/product', form, {
       headers: {
         'Content-Type': 'multipart/form-data'
